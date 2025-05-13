@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =6
+let g:netrw_dirhist_6='/home/james/.vim'
+let g:netrw_dirhist_5='/home/james/microq/web'
+let g:netrw_dirhist_4='/home/james/thin-kdb/k8s'
+let g:netrw_dirhist_3='/home/james/microq/rdb'
+let g:netrw_dirhist_2='/home/james/microq/k8s'
+let g:netrw_dirhist_1='/home/james/microq/common'
+let g:netrw_dirhist_0='/home/james/TorQ'
+let g:netrw_dirhist_9='/home/james/microq/rdb'
+let g:netrw_dirhist_8='/home/james/microq/k8s'
+let g:netrw_dirhist_7='/home/james/advancedKDB/csv'
