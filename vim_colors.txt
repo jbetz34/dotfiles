@@ -1,241 +1,108 @@
-
-
-
-Added          xxx ctermfg=10 guifg=LimeGreen
-
-Bold           xxx term=bold cterm=bold gui=bold
-
-BoldItalic     xxx term=bold,italic cterm=bold,italic gui=bold,italic
-
-Boolean        xxx links to Constant
-
-Changed        xxx ctermfg=12 guifg=DodgerBlue
-
-Character      xxx links to Constant
-
-ColorColumn    xxx term=reverse ctermbg=1 guibg=DarkRed
-
-
-
-Comment        xxx term=bold ctermfg=14 guifg=#80a0ff
-
-ComplMatchIns  xxx cleared
-
-Conceal        xxx ctermfg=7 ctermbg=242 guifg=LightGrey guibg=DarkGrey
-
-Conditional    xxx links to Statement
-
-Constant       xxx term=underline ctermfg=13 guifg=#ffa0a0
-
-CurSearch      xxx links to Search
-
-CursorColumn   xxx term=reverse ctermbg=242 guibg=Grey40
-
-CursorLine     xxx term=underline cterm=underline guibg=Grey40
-
-CursorLineFold xxx links to FoldColumn
-
-CursorLineNr   xxx term=bold cterm=underline ctermfg=11 gui=bold
-                   guifg=Yellow
-
-CursorLineSign xxx links to SignColumn
-
-Debug          xxx links to Special
-
-Define         xxx links to PreProc
-
-Delimiter      xxx links to Special
-
-DiffAdd        xxx term=bold ctermbg=4 guibg=DarkBlue
-
-DiffChange     xxx term=bold ctermbg=5 guibg=DarkMagenta
-
-DiffDelete     xxx term=bold ctermfg=12 ctermbg=6 gui=bold guifg=Blue
-                   guibg=DarkCyan
-
-DiffText       xxx term=reverse cterm=bold ctermbg=9 gui=bold guibg=Red
-
-DiffTextAdd    xxx links to DiffText
-
-Directory      xxx term=bold ctermfg=159 guifg=Cyan
-
-EndOfBuffer    xxx links to NonText
-
-Error          xxx term=reverse ctermfg=15 ctermbg=9 guifg=White
-                   guibg=Red
-
-ErrorMsg       xxx term=standout ctermfg=15 ctermbg=1 guifg=White
-                   guibg=Red
-
-Exception      xxx links to Statement
-
-Float          xxx links to Number
-
-FoldColumn     xxx term=standout ctermfg=14 ctermbg=242 guifg=Cyan
-                   guibg=Grey
-
-Folded         xxx term=standout ctermfg=14 ctermbg=242 guifg=Cyan
-                   guibg=DarkGrey
-
-Function       xxx links to Identifier
-
-Identifier     xxx term=underline cterm=bold ctermfg=14 guifg=#40ffff
-
-Ignore         xxx ctermfg=0 guifg=bg
-
-IncSearch      xxx term=reverse cterm=reverse gui=reverse
-
-Include        xxx links to PreProc
-
-Italic         xxx term=italic cterm=italic gui=italic
-
-Keyword        xxx links to Statement
-
-Label          xxx links to Statement
-
-LineNr         xxx term=underline ctermfg=11 guifg=Yellow
-
-LineNrAbove    xxx cleared
-
-LineNrBelow    xxx cleared
-
-Macro          xxx links to PreProc
-
-MatchParen     xxx term=reverse ctermbg=6 guibg=DarkCyan
-
-MessageWindow  xxx links to WarningMsg
-
-ModeMsg        xxx term=bold cterm=bold gui=bold
-
-MoreMsg        xxx term=bold ctermfg=121 gui=bold guifg=SeaGreen
-
-MsgArea        xxx cleared
-
-NonText        xxx term=bold ctermfg=12 gui=bold guifg=Blue
-
-Normal         xxx cleared
-
-Number         xxx links to Constant
-
-Operator       xxx links to Statement
-
-Pmenu          xxx ctermfg=0 ctermbg=13 guibg=Magenta
-
-PmenuExtra     xxx links to Pmenu
-
-PmenuExtraSel  xxx links to PmenuSel
-
-PmenuKind      xxx links to Pmenu
-
-PmenuKindSel   xxx links to PmenuSel
-
-PmenuMatch     xxx links to Pmenu
-
-
-
-PmenuMatchSel  xxx links to PmenuSel
-
-PmenuSbar      xxx ctermbg=248 guibg=Grey
-
-PmenuSel       xxx ctermfg=242 ctermbg=0 guibg=DarkGrey
-
-PmenuThumb     xxx ctermbg=15 guibg=White
-
-PopupNotification xxx links to WarningMsg
-
-PopupSelected  xxx links to PmenuSel
-
-PreCondit      xxx links to PreProc
-
-PreInsert      xxx links to Added
-
-PreProc        xxx term=underline ctermfg=81 guifg=#ff80ff
-
-Question       xxx term=standout ctermfg=121 gui=bold guifg=Green
-
-QuickFixLine   xxx links to Search
-
-Removed        xxx ctermfg=9 guifg=Red
-
-Repeat         xxx links to Statement
-
-Search         xxx term=reverse ctermfg=0 ctermbg=11 guifg=Black
-                   guibg=Yellow
-
-SignColumn     xxx term=standout ctermfg=14 ctermbg=242 guifg=Cyan
-                   guibg=Grey
-
-Special        xxx term=bold ctermfg=224 guifg=Orange
-
-SpecialChar    xxx links to Special
-
-SpecialComment xxx links to Special
-
-SpecialKey     xxx term=bold ctermfg=81 guifg=Cyan
-
-SpellBad       xxx term=reverse ctermbg=9 gui=undercurl guisp=Red
-
-SpellCap       xxx term=reverse ctermbg=12 gui=undercurl guisp=Blue
-
-SpellLocal     xxx term=underline ctermbg=14 gui=undercurl guisp=Cyan
-
-SpellRare      xxx term=reverse ctermbg=13 gui=undercurl guisp=Magenta
-
-Statement      xxx term=bold ctermfg=11 gui=bold guifg=#ffff60
-
-StatusLine     xxx term=bold,reverse cterm=bold,reverse
-                   gui=bold,reverse
-
-StatusLineNC   xxx term=reverse cterm=reverse gui=reverse
-
-StatusLineTerm xxx term=bold,reverse cterm=bold ctermfg=0 ctermbg=121
-                   gui=bold guifg=bg guibg=LightGreen
-
-StatusLineTermNC xxx term=reverse ctermfg=0 ctermbg=121 guifg=bg
-                   guibg=LightGreen
-
-StorageClass   xxx links to Type
-
-String         xxx links to Constant
-
-Structure      xxx links to Type
-
-TabLine        xxx term=underline cterm=underline ctermfg=15
-                   ctermbg=242 gui=underline guibg=DarkGrey
-
-TabLineFill    xxx term=reverse cterm=reverse gui=reverse
-
-TabLineSel     xxx term=bold cterm=bold gui=bold
-
-
-
-Tag            xxx links to Special
-
-Title          xxx term=bold ctermfg=225 gui=bold guifg=Magenta
-
-Todo           xxx term=standout ctermfg=0 ctermbg=11 guifg=Blue guibg=Yellow
-
-ToolbarButton  xxx cterm=bold ctermfg=0 ctermbg=7 gui=bold guifg=Black guibg=LightGrey
-
-ToolbarLine    xxx term=underline ctermbg=242 guibg=Grey50
-
-Type           xxx term=underline ctermfg=121 gui=bold guifg=#60ff60
-
-Typedef        xxx links to Type
-
-Underlined     xxx term=underline cterm=underline ctermfg=81 gui=underline guifg=#80a0ff
-
-VertSplit      xxx term=reverse cterm=reverse gui=reverse
-
-Visual         xxx ctermfg=0 ctermbg=248 guifg=LightGrey guibg=#575757
-
-VisualNOS      xxx cleared
-
-WarningMsg     xxx term=standout ctermfg=224 guifg=Red
-
-WildMenu       xxx term=standout ctermfg=0 ctermbg=11 guifg=Black guibg=Yellow
-
-
-E412: Not enough arguments: ":highlight link "
-
-E412: Not enough arguments: ":highlight link "
+Added          ctermfg=10 guifg=LimeGreen
+Bold           term=bold cterm=bold gui=bold
+BoldItalic     term=bold,italic cterm=bold,italic gui=bold,italic
+Boolean        links to Constant
+Changed        ctermfg=12 guifg=DodgerBlue
+Character      links to Constant
+ColorColumn    term=reverse ctermbg=1 guibg=DarkRed
+Comment        term=bold ctermfg=14 guifg=#80a0ff
+ComplMatchIns  cleared
+Conceal        ctermfg=7 ctermbg=242 guifg=LightGrey guibg=DarkGrey
+Conditional    links to Statement
+Constant       term=underline ctermfg=13 guifg=#ffa0a0
+CurSearch      links to Search
+CursorColumn   term=reverse ctermbg=242 guibg=Grey40
+CursorLine     term=underline cterm=underline guibg=Grey40
+CursorLineFold links to FoldColumn
+CursorLineNr   term=bold cterm=underline ctermfg=11 gui=bold guifg=Yellow
+CursorLineSign links to SignColumn
+Debug          links to Special
+Define         links to PreProc
+Delimiter      links to Special
+DiffAdd        term=bold ctermbg=4 guibg=DarkBlue
+DiffChange     term=bold ctermbg=5 guibg=DarkMagenta
+DiffDelete     term=bold ctermfg=12 ctermbg=6 gui=bold guifg=Blue guibg=DarkCyan
+DiffText       term=reverse cterm=bold ctermbg=9 gui=bold guibg=Red
+DiffTextAdd    links to DiffText
+Directory      term=bold ctermfg=159 guifg=Cyan
+EndOfBuffer    links to NonText
+Error          term=reverse ctermfg=15 ctermbg=9 guifg=White guibg=Red
+ErrorMsg       term=standout ctermfg=15 ctermbg=1 guifg=White guibg=Red
+Exception      links to Statement
+Float          links to Number
+FoldColumn     term=standout ctermfg=14 ctermbg=242 guifg=Cyan guibg=Grey
+Folded         term=standout ctermfg=14 ctermbg=242 guifg=Cyan guibg=DarkGrey
+Function       links to Identifier
+Identifier     term=underline cterm=bold ctermfg=14 guifg=#40ffff
+Ignore         ctermfg=0 guifg=bg
+IncSearch      term=reverse cterm=reverse gui=reverse
+Include        links to PreProc
+Italic         term=italic cterm=italic gui=italic
+Keyword        links to Statement
+Label          links to Statement
+LineNr         term=underline ctermfg=11 guifg=Yellow
+LineNrAbove    cleared
+LineNrBelow    cleared
+Macro          links to PreProc
+MatchParen     term=reverse ctermbg=6 guibg=DarkCyan
+MessageWindow  links to WarningMsg
+ModeMsg        term=bold cterm=bold gui=bold
+MoreMsg        term=bold ctermfg=121 gui=bold guifg=SeaGreen
+MsgArea        cleared
+NonText        term=bold ctermfg=12 gui=bold guifg=Blue
+Normal         cleared
+Number         links to Constant
+Operator       links to Statement
+Pmenu          ctermfg=0 ctermbg=13 guibg=Magenta
+PmenuExtra     links to Pmenu
+PmenuExtraSel  links to PmenuSel
+PmenuKind      links to Pmenu
+PmenuKindSel   links to PmenuSel
+PmenuMatch     links to Pmenu
+PmenuMatchSel  links to PmenuSel
+PmenuSbar      ctermbg=248 guibg=Grey
+PmenuSel       ctermfg=242 ctermbg=0 guibg=DarkGrey
+PmenuThumb     ctermbg=15 guibg=White
+PopupNotification links to WarningMsg
+PopupSelected  links to PmenuSel
+PreCondit      links to PreProc
+PreInsert      links to Added
+PreProc        term=underline ctermfg=81 guifg=#ff80ff
+Question       term=standout ctermfg=121 gui=bold guifg=Green
+QuickFixLine   links to Search
+Removed        ctermfg=9 guifg=Red
+Repeat         links to Statement
+Search         term=reverse ctermfg=0 ctermbg=11 guifg=Black guibg=Yellow
+SignColumn     term=standout ctermfg=14 ctermbg=242 guifg=Cyan guibg=Grey
+Special        term=bold ctermfg=224 guifg=Orange
+SpecialChar    links to Special
+SpecialComment links to Special
+SpecialKey     term=bold ctermfg=81 guifg=Cyan
+SpellBad       term=reverse ctermbg=9 gui=undercurl guisp=Red
+SpellCap       term=reverse ctermbg=12 gui=undercurl guisp=Blue
+SpellLocal     term=underline ctermbg=14 gui=undercurl guisp=Cyan
+SpellRare      term=reverse ctermbg=13 gui=undercurl guisp=Magenta
+Statement      term=bold ctermfg=11 gui=bold guifg=#ffff60
+StatusLine     term=bold,reverse cterm=bold,reverse gui=bold,reverse
+StatusLineNC   term=reverse cterm=reverse gui=reverse
+StatusLineTerm term=bold,reverse cterm=bold ctermfg=0 ctermbg=121 gui=bold guifg=bg guibg=LightGreen
+StatusLineTermNC term=reverse ctermfg=0 ctermbg=121 guifg=bg guibg=LightGreen
+StorageClass   links to Type
+String         links to Constant
+Structure      links to Type
+TabLine        term=underline cterm=underline ctermfg=15 ctermbg=242 gui=underline guibg=DarkGrey
+TabLineFill    term=reverse cterm=reverse gui=reverse
+TabLineSel     term=bold cterm=bold gui=bold
+Tag            links to Special
+Title          term=bold ctermfg=225 gui=bold guifg=Magenta
+Todo           term=standout ctermfg=0 ctermbg=11 guifg=Blue guibg=Yellow
+ToolbarButton  cterm=bold ctermfg=0 ctermbg=7 gui=bold guifg=Black guibg=LightGrey
+ToolbarLine    term=underline ctermbg=242 guibg=Grey50
+Type           term=underline ctermfg=121 gui=bold guifg=#60ff60
+Typedef        links to Type
+Underlined     term=underline cterm=underline ctermfg=81 gui=underline guifg=#80a0ff
+VertSplit      term=reverse cterm=reverse gui=reverse
+Visual         ctermfg=0 ctermbg=248 guifg=LightGrey guibg=#575757
+VisualNOS      cleared
+WarningMsg     term=standout ctermfg=224 guifg=Red
+WildMenu       term=standout ctermfg=0 ctermbg=11 guifg=Black guibg=Yellow
