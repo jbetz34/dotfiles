@@ -11,5 +11,9 @@ augroup MyHighlightOverrides
   autocmd ColorScheme * highlight CursorLineNr ctermfg=Yellow guifg=Yellow cterm=NONE gui=NONE
 augroup END
 
+hi LineNr ctermfg=Blue guifg=Blue
+hi CursorLine cterm=NONE gui=NONE
+hi CursorLineNr ctermfg=Yellow guifg=Yellow cterm=NONE gui=NONE
+
 " Auto indent for specific filetypes
 autocmd FileType yaml set tabstop=2
