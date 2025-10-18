@@ -6,7 +6,7 @@ hi clear
 if exists("syntax_on")
   syntax reset
 endif
-let g:colors_name = "my_terminal_theme"
+let g:colors_name = "vim_colors"
 
 " --- Custom Highlights ---
 hi Added          ctermfg=10 guifg=LimeGreen

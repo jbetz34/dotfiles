@@ -2,7 +2,7 @@
 set number relativenumber expandtab cursorline
 
 " Standard colorschme options
-colorscheme ron
+colorscheme james
 " colorscheme slate
 highlight LineNr ctermfg=Blue
 highlight CursorLine cterm=NONE
