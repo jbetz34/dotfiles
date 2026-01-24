@@ -9,16 +9,17 @@ if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] &&
     fi
 fi
 
-export QHOME=~/q/v3.6/
+export QHOME=~/q/v4.1/
 export KHOME=~/k
-if ! [[ "$PATH" =~ "${QHOME}/l32" ]] ; then
-    export PATH=${PATH}:${QHOME}/l32; 
+if ! [[ "$PATH" =~ "${QHOME}/l64" ]] ; then
+    export PATH=${PATH}:${QHOME}/l64; 
 fi
 
 if ! [[ "$PATH" =~ "$KHOME" ]] ; then
     export PATH=$PATH:$KHOME
 fi
 
+alias vim='nvim'
 alias q='rlwrap q'
 #alias k='rlwrap k'
 source ~/.kubectl_completion

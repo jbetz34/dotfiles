@@ -5,4 +5,5 @@
 	email = jbetz34@gmail.com
 	name = James
 [alias]
-	head = log --oneline -10
+	ls = log --oneline -10
+	st = status
