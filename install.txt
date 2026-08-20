@@ -1,7 +1,0 @@
-bash_james /home/james/.bash_james
-gitconfig ~/.gitconfig
-kubectl_completion ~/.kubectl_completion
-tmux ~/.tmux
-tmux.conf ~/.tmux.comf
-vim ~/.vim
-vimrc ~/.vimrc

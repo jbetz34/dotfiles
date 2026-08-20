@@ -1,0 +1,16 @@
+# tmux plugins are redirected to ~/.local/share/tmux/plugins by tmux.conf,
+# but ignore the default location too in case tpm is ever run without it.
+tmux/plugins/
+
+# nvim writes these into the config dir if lazy.nvim is misconfigured;
+# the real lockfile is tracked deliberately (see below).
+nvim/.luarc.json
+
+# vim leaves these behind inside the runtime dir we track
+vim/.netrwhist
+*.swp
+*.swo
+*~
+
+# install.sh backups
+*.bak.*
