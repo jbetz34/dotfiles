@@ -9,7 +9,7 @@
 
 -------------------------------------------------------------------- runtime --
 
--- Inherit the existing vim config tree: colors/james.vim, syntax/{q,k}.vim,
+-- Inherit the existing vim config tree: colors/mocha.vim, syntax/{q,k}.vim,
 -- ftdetect/{q,k}.vim, ftplugin/. One colourscheme, both editors.
 vim.opt.runtimepath:prepend(vim.fn.expand("~/.vim"))
 vim.opt.runtimepath:append(vim.fn.expand("~/.vim/after"))
@@ -34,9 +34,12 @@ o.swapfile = false
 o.scrolloff = 6
 o.splitright = true
 o.splitbelow = true
-o.termguicolors = false        -- james.vim is a cterm (16/256 colour) scheme;
-                               -- keeping this false makes nvim honour the
-                               -- terminal palette, so editor and terminal match.
+o.termguicolors = true         -- mocha.vim is a 24-bit scheme with a 256-colour
+                               -- fallback. tmux.conf already advertises RGB via
+                               -- terminal-features, so true colour survives
+                               -- tmux + ssh. Set this to false to force the
+                               -- 256-colour path (e.g. on a terminal that lies
+                               -- about RGB support and renders mud).
 o.mouse = "a"
 o.clipboard = "unnamedplus"    -- yank goes to the system clipboard (OSC52 over ssh)
 o.updatetime = 250
@@ -47,18 +50,21 @@ if vim.env.SSH_TTY or vim.env.TMUX then
   vim.g.clipboard = "osc52"
 end
 
-vim.cmd.colorscheme("james")
+-- ~/.vim/colors/mocha.vim -- one file, shared with plain vim, fully commented.
+-- Scheme options (g:mocha_transparent, g:mocha_contrast, g:mocha_palette, ...)
+-- must be set BEFORE this line; see section 1 of the scheme for the list.
+--   vim.g.mocha_italic_keywords = 1
+--   vim.g.mocha_contrast = "hard"
+vim.cmd.colorscheme("mocha")
 
--- Mirror the vimrc highlight overrides so the two editors look the same.
-vim.api.nvim_create_autocmd("ColorScheme", {
-  callback = function()
-    vim.cmd([[
-      highlight LineNr       ctermfg=Blue   guifg=Blue
-      highlight CursorLine   cterm=NONE     gui=NONE
-      highlight CursorLineNr ctermfg=Yellow guifg=Yellow cterm=NONE gui=NONE
-    ]])
-  end,
-})
+-- Per-machine tweaks go here, NOT in the scheme, so a work-box quirk never
+-- follows you home. This autocmd re-applies them after any :colorscheme call.
+-- vim.api.nvim_create_autocmd("ColorScheme", {
+--   pattern = "mocha",
+--   callback = function()
+--     vim.api.nvim_set_hl(0, "CursorLine", { bg = "#2a2b3c" })
+--   end,
+-- })
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "yaml", "json", "lua", "markdown" },
@@ -151,7 +157,7 @@ require("lazy").setup({
 
   { "neovim/nvim-lspconfig" },
 }, {
-  install = { colorscheme = { "james" } },
+  install = { colorscheme = { "mocha" } },
   change_detection = { notify = false },
 })
 
