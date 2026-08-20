@@ -1,0 +1,38 @@
+# readline config -- satisfies the "terminal shortcuts" block of vscode-requirements.md
+#
+# Most of these are already readline defaults in emacs mode; they are written out
+# explicitly so the behaviour is identical on a bare RHEL7 box, over SSH, and
+# inside any terminal emulator that sends a different escape sequence.
+
+set editing-mode emacs
+
+# --- word-wise motion (Ctrl+Left / Ctrl+Right) -------------------------------
+# Terminals disagree on what they send, so bind every common variant.
+"\e[1;5C": forward-word      # xterm / Windows Terminal / most modern emulators
+"\e[1;5D": backward-word
+"\e[5C":   forward-word      # older xterm
+"\e[5D":   backward-word
+"\eOc":    forward-word      # rxvt
+"\eOd":    backward-word
+
+# --- word-wise deletion ------------------------------------------------------
+"\e\C-?": backward-kill-word # Alt+Backspace  -> delete a word (stops at punctuation)
+# Ctrl+w is unix-word-rubout by default -> deletes a BigWord (whitespace delimited)
+# Ctrl+a beginning-of-line, Ctrl+e end-of-line, Ctrl+k kill-line: readline defaults
+
+# --- history -----------------------------------------------------------------
+# Up/Down filter history by what you have already typed rather than walking it
+# blindly. Type "git c" then Up to cycle only git c* commands.
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+"\eOA": history-search-backward
+"\eOB": history-search-forward
+
+# --- completion --------------------------------------------------------------
+set completion-ignore-case on
+set completion-map-case on
+set show-all-if-ambiguous on
+set colored-stats on
+set colored-completion-prefix on
+set bell-style none
+set skip-completed-text on
