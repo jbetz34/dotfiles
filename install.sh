@@ -57,15 +57,15 @@ link() {
 }
 
 do_link() {
-  link bash_james        "$HOME/.bash_james"
-  link gitconfig         "$HOME/.gitconfig"
-  link kubectl_completion "$HOME/.kubectl_completion"
-  link inputrc           "$HOME/.inputrc"
-  link tmux.conf         "$HOME/.tmux.conf"   # NOTE: install.txt used to say .tmux.comf
-  link tmux              "$HOME/.tmux"
-  link vimrc             "$HOME/.vimrc"
-  link vim               "$HOME/.vim"
-  link nvim              "$HOME/.config/nvim"
+  link .bash_james        "$HOME/.bash_james"
+  link .gitconfig         "$HOME/.gitconfig"
+  link .kubectl_completion "$HOME/.kubectl_completion"
+  link .inputrc           "$HOME/.inputrc"
+  link .tmux.conf         "$HOME/.tmux.conf"   # NOTE: install.txt used to say .tmux.comf
+  link .tmux              "$HOME/.tmux"
+  link .vimrc             "$HOME/.vimrc"
+  link .vim               "$HOME/.vim"
+  link .nvim              "$HOME/.config/nvim"
 
   # ~/.bashrc is managed by the distro; append our hook once instead of linking.
   if ! grep -q 'bash_james' "$HOME/.bashrc" 2>/dev/null; then
