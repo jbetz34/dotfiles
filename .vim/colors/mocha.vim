@@ -114,8 +114,8 @@ let g:colors_name = 'mocha'
 " 'hard' contrast drops the editor background from base (#1e1e2e) to crust
 " (#11111b), which reads better on a bright monitor or a cheap projector.
 
-let s:transparent     = get(g:, 'mocha_transparent',     0)
-let s:italic_comments = get(g:, 'mocha_italic_comments', 1)
+let s:transparent     = get(g:, 'mocha_transparent',     1)
+let s:italic_comments = get(g:, 'mocha_italic_comments', 0)
 let s:italic_keywords = get(g:, 'mocha_italic_keywords', 0)
 let s:bold_functions  = get(g:, 'mocha_bold_functions',  0)
 let s:dim_inactive    = get(g:, 'mocha_dim_inactive',    1)

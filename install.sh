@@ -59,9 +59,10 @@ link() {
 do_link() {
   link .bash_james        "$HOME/.bash_james"
   link .gitconfig         "$HOME/.gitconfig"
+  link .git-prompt.sh     "$HOME/.git-prompt.sh"
   link .kubectl_completion "$HOME/.kubectl_completion"
   link .inputrc           "$HOME/.inputrc"
-  link .tmux.conf         "$HOME/.tmux.conf"   # NOTE: install.txt used to say .tmux.comf
+  link .tmux.conf         "$HOME/.tmux.conf"
   link .tmux              "$HOME/.tmux"
   link .vimrc             "$HOME/.vimrc"
   link .vim               "$HOME/.vim"

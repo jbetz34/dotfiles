@@ -1,67 +1,192 @@
 " =============================================================================
-" james.vim - pure 16-color build on the Fruit Loops ANSI palette
+" mocha.vim  --  a Catppuccin-Mocha-flavoured colourscheme that you own
 " =============================================================================
 "
-" Every gui hex is the Fruit Loops hex. Every cterm number is the matching
-" ANSI slot (0-15). Truecolor and non-truecolor modes render identically
-"
-"   slot  name         hex      role in this scheme
-"    0    black        #1E2327  background, float bg
-"    7    white        #a2adb5  dim fg, comments, params
-"    8    brightBlack  #565f67  muted fg, punctuation, line numbers
-"    9    brightRed    #ff9890  errors, numbers, removed
+" Filename:    ~/.vim/colors/mocha.vim   (nvim reads the same file; see init.lua)
+" Usage:       :colorscheme mocha
 "
 "
+" WHY THIS FILE EXISTS
+" --------------------
+" This is a hand-rolled scheme in the *spirit* of Catppuccin Mocha: a soft dark
+" background with pastel accents. It is deliberately NOT the catppuccin plugin,
+" because that would be a plugin to fight with. Everything is here, in one
+" vimscript file, so:
+"
+"   * plain vim on RHEL7 and nvim on your laptop use the SAME file (no drift),
+"   * you can change any colour by editing one line,
+"   * nothing needs a plugin manager, a C compiler, or network access.
+"
+" The palette values in section 2 are the Catppuccin Mocha ramp (MIT licensed,
+" and already contrast-tested), used as a starting point. The structure around
+" them -- roles, helper, group list -- is ours, and the palette is one block you
+" can overwrite wholesale.
+"
+"
+" HOW THIS FILE IS ORGANISED  (search for the numbered banners)
+" ------------------------------------------------------------
+"   1. OPTIONS      - the g:mocha_* switches (italics, transparency, contrast)
+"   2. PALETTE      - the raw colours.  "I want a different green" -> here.
+"   3. ROLES        - what each colour MEANS. "keywords should be blue" -> here.
+"   4. HELPER       - the s:hi() function that writes :highlight commands.
+"   5. EDITOR UI    - Normal, StatusLine, Pmenu, Visual, Search, diffs, ...
+"   6. SYNTAX       - Comment, String, Function, Type, ... (vim's core groups)
+"   7. TREESITTER   - the nvim @capture groups + LSP semantic tokens.
+"   8. DIAGNOSTICS  - nvim LSP errors/warnings/hints.
+"   9. PLUGINS      - telescope, oil, render-markdown.
+"  10. Q / K        - groups your vim/syntax/{q,k}.vim files reference.
+"  11. TERMINAL     - the 16 ANSI colours used by nvim's :terminal.
+"  12. TOOLING      - :MochaPalette and :MochaWhat, for editing this file.
+"
+"
+" THE THREE THINGS YOU'LL ACTUALLY DO
+" -----------------------------------
+" (a) "This colour is wrong."  Find the group name, change the role.
+"     Put the cursor on the offending character and run:
+"         nvim:  :Inspect            (shows treesitter + syntax + LSP groups)
+"         vim:   :MochaWhat          (defined at the bottom of this file)
+"     Then find that group name below and edit the role argument.
+"
+" (b) "I want a different palette."  Edit section 2. You do not need to touch
+"     anything else -- every group refers to colours by NAME, never by hex.
+"     To try values without editing this file at all, put a dict in your vimrc
+"     BEFORE the :colorscheme line:
+"         let g:mocha_palette = {'blue': ['#7aa2f7', 111], 'base': ['#16161e', 234]}
+"     Each entry is [gui-hex, cterm-256-number].
+"
+" (c) "Reload and look at it."  :colorscheme mocha  re-sources this file.
+"     There is no cache and no compile step.
+"
+"
+" READING AN s:hi() LINE
+" ----------------------
+"     call s:hi('Comment', 'overlay1', '', s:italic)
+"                 |          |         |      |
+"                 group    foreground  bg    style
+"
+" Foreground/background/special are palette NAMES from section 2, or '' for
+" "leave transparent / inherit". Style is one of the s:* style constants
+" defined in section 1, or a literal like 'bold,underline'.
+"
+"
+" COLOUR DEPTH
+" ------------
+" Every group is emitted twice: guifg/guibg (24-bit, used when 'termguicolors'
+" is on) and ctermfg/ctermbg (the 256-colour approximation). So:
+"
+"   nvim + modern terminal   -> termguicolors on, exact hex.        Best case.
+"   vim 8 / nvim, no truecol -> 256-colour approximation. Very close.
+"   vim 7.4 on RHEL7         -> same 256-colour path. Works.
+"   8/16-colour terminal     -> will look wrong. Set TERM to a -256color entry.
+"
+" The cterm numbers deliberately avoid 0-15: those sixteen are whatever the
+" terminal profile defines, so using them would make the scheme change shape
+" from machine to machine.
+"
+" =============================================================================
+
 hi clear
 if exists('syntax_on')
   syntax reset
 endif
 
 set background=dark
-let g:colors_name = 'james'
+let g:colors_name = 'mocha'
+
 
 " =============================================================================
 " 1. OPTIONS
 " =============================================================================
+" Set any of these in your vimrc / init.lua BEFORE :colorscheme mocha.
+" Defaults are on the right of each get() call.
+"
+"   let g:mocha_transparent     = 1   " don't paint the background at all, so
+"                                     " the terminal's own background shows
+"                                     " through (useful with a transparent
+"                                     " terminal or a background image)
+"   let g:mocha_italic_comments = 0   " turn off italic comments
+"   let g:mocha_italic_keywords = 1   " italicise keywords too
+"   let g:mocha_bold_functions  = 1   " bold function names
+"   let g:mocha_dim_inactive    = 0   " make unfocused splits the same as focused
+"   let g:mocha_contrast        = 'hard'   " 'default' | 'hard'
+"   let g:mocha_palette         = {...}    " see (b) in the header
+"
+" 'hard' contrast drops the editor background from base (#1e1e2e) to crust
+" (#11111b), which reads better on a bright monitor or a cheap projector.
 
-let s:transparent     = get(g:, 'james_transparent',     1)
-let s:italic_comments = get(g:, 'james_italic_comments', 0)
-let s:italic_keywords = get(g:, 'james_italic_keywords', 0)
-let s:bold_functions  = get(g:, 'james_bold_functions',  0)
-let s:dim_inactive    = get(g:, 'james_dim_inactive',    1)
+let s:transparent     = get(g:, 'mocha_transparent',     0)
+let s:italic_comments = get(g:, 'mocha_italic_comments', 1)
+let s:italic_keywords = get(g:, 'mocha_italic_keywords', 0)
+let s:bold_functions  = get(g:, 'mocha_bold_functions',  0)
+let s:dim_inactive    = get(g:, 'mocha_dim_inactive',    1)
+let s:contrast        = get(g:, 'mocha_contrast',        'default')
 
+" Style constants. Referred to as s:italic etc. so that flipping one option
+" above changes every group that uses it, instead of you editing 40 lines.
 let s:none      = 'NONE'
 let s:bold      = 'bold'
 let s:underline = 'underline'
 let s:undercurl = 'undercurl'
+let s:reverse   = 'reverse'
 let s:italic    = s:italic_comments ? 'italic' : 'NONE'
 let s:kw_italic = s:italic_keywords ? 'italic' : 'NONE'
 let s:fn_bold   = s:bold_functions  ? 'bold'   : 'NONE'
 
-" =============================================================================
-" 2. PALETTE  (Fruit Loops, 16 slots)
-" =============================================================================
-let s:palette = {
-            \ 'black': 	['#1E2327',  0],
-	        \ 'red': 	['#F60029',  1],
-	        \ 'green': 	['#4F9A00',  2],
-	        \ 'yellow': ['#9C8200',  3],
-	        \ 'blue': 	['#0087E5',  4],
-	        \ 'purple': ['#C301FB',  5],
-	        \ 'cyan': 	['#009797',  6],
-	        \ 'white': 	['#A2ADB5',  7],
-	        \ 'bblack': ['#565F67',  8],
-	        \ 'bred': 	['#FF9890',  9],
-	        \ 'bgreen': ['#71D700', 10],
-	        \ 'byellow':['#D9B600', 11],
-	        \ 'bblue': 	['#7FBEFF', 12],
-	        \ 'bpurple':['#DF97FF', 13],
-	        \ 'bcyan': 	['#00D3D3', 14],
-	        \ 'bwhite': ['#F2F2F2', 15],
-            \ }
 
-
+" =============================================================================
+" 2. PALETTE
+" =============================================================================
+" name -> [gui hex, cterm-256 number]
 "
+" The ramp has a shape worth preserving when you edit it:
+"
+"   crust/mantle/base        the three background tiers, darkest first.
+"                            base is the editor background; mantle is for
+"                            things that sit *behind* it (statusline, tabline);
+"                            crust is the deepest, used for borders and shadow.
+"   surface0/1/2             raised backgrounds: cursorline, selections, popups.
+"   overlay0/1/2             muted foregrounds: comments, line numbers, borders.
+"   subtext0/subtext1/text   real foreground text, dimmest to brightest.
+"   the 14 accents           hue names, not role names, on purpose -- section 3
+"                            is where a hue gets a job. That indirection is why
+"                            "make strings green instead of yellow" is a
+"                            one-line change in section 3, and why swapping the
+"                            whole palette here doesn't break anything.
+"
+" cterm fallbacks: the background/foreground tiers map to the 232-255 greyscale
+" ramp, which is more neutral than the true hex (which leans blue-violet). That
+" is a deliberate trade -- the greys stay correctly ORDERED in 256-colour mode,
+" which matters more than hue fidelity when you're on an old box.
+
+let s:palette = {
+      \ 'crust':     ['#11111b', 233],
+      \ 'mantle':    ['#181825', 234],
+      \ 'base':      ['#1e1e2e', 235],
+      \ 'surface0':  ['#313244', 236],
+      \ 'surface1':  ['#45475a', 238],
+      \ 'surface2':  ['#585b70', 240],
+      \ 'overlay0':  ['#6c7086', 242],
+      \ 'overlay1':  ['#7f849c', 244],
+      \ 'overlay2':  ['#9399b2', 247],
+      \ 'subtext0':  ['#a6adc8', 249],
+      \ 'subtext1':  ['#bac2de', 251],
+      \ 'text':      ['#cdd6f4', 253],
+      \ 'rosewater': ['#f5e0dc', 224],
+      \ 'flamingo':  ['#f2cdcd', 217],
+      \ 'pink':      ['#f5c2e7', 218],
+      \ 'mauve':     ['#cba6f7', 183],
+      \ 'red':       ['#f38ba8', 211],
+      \ 'maroon':    ['#eba0ac', 181],
+      \ 'peach':     ['#fab387', 216],
+      \ 'yellow':    ['#f9e2af', 223],
+      \ 'green':     ['#a6e3a1', 151],
+      \ 'teal':      ['#94e2d5', 116],
+      \ 'sky':       ['#89dceb', 117],
+      \ 'sapphire':  ['#74c7ec',  74],
+      \ 'blue':      ['#89b4fa', 111],
+      \ 'lavender':  ['#b4befe', 147],
+      \ }
+
 " Per-machine overrides from the vimrc, e.g. a lighter background on the work
 " box only. Merged after the defaults so you only name what you're changing.
 if exists('g:mocha_palette')
@@ -72,50 +197,70 @@ endif
 " =============================================================================
 " 3. ROLES
 " =============================================================================
+" This section is the interesting one. It maps a JOB to a hue, and sections 5-10
+" only ever mention jobs. Want keywords blue instead of mauve? Change one line
+" here and every keyword-ish group in every language follows -- including the
+" treesitter groups and the q/k syntax files.
+"
+" These are just palette names, so a role can point at another role too.
 
-let s:bg        = 'black'
-let s:bg_float  = 'black'       " popup / floating window background
-let s:bg_sel    = 'bblack'      " visual selection
-let s:bg_cursor = 'black'       " cursorline / cursorcolumn
-"let s:bg_alt    = ''      " statusline, tabline -- one tier off s:bg either
+let s:bg        = s:contrast ==# 'hard' ? 'crust' : 'base'
+let s:bg_alt    = 'mantle'      " statusline, tabline -- one tier off s:bg either
                                 " way, so the bar stays visible in both contrasts
-"let s:border    = 'surface2'    " window separators, float borders
+let s:bg_float  = 'mantle'      " popup / floating window background
+let s:bg_sel    = 'surface1'    " visual selection
+let s:bg_cursor = 'surface0'    " cursorline / cursorcolumn
+let s:border    = 'surface2'    " window separators, float borders
 
-let s:fg        = 'bwhite'        " normal text
-let s:fg_dim    = 'white'    " labels, less important text
-let s:fg_mute   = 'bblack'    " line numbers, whitespace markers, quotes
+let s:fg        = 'text'        " normal text
+let s:fg_dim    = 'subtext0'    " labels, less important text
+let s:fg_mute   = 'overlay1'    " line numbers, whitespace markers, quotes
+
+" CONTRAST, measured (WCAG ratio against the #1e1e2e background):
+"
+"   text 11.3   subtext1 9.3   subtext0 7.4   overlay2 5.8
+"   overlay1 4.4   overlay0 3.4   surface2 2.5
+"   every accent 7.1 - 12.9 (dimmest: red 7.1, brightest: rosewater 13.0)
+"
+" 4.5 is the AA threshold for body text, 3.0 for UI chrome. So: every accent
+" and every text tier is comfortably AA on the normal background, overlay1/0
+" are chrome-only on purpose, and the numbers drop by about a third on top of
+" CursorLine (surface0) and by half on top of Visual (surface1) -- which is why
+" comments use overlay2 rather than the dimmer overlay1. If you want comments
+" to recede harder, overlay1 (4.4) or overlay0 (3.4) is the knob; both are
+" legible on the normal background and get muddy on the current line.
 
 " Syntax roles. The left column is the job; change the right column freely.
-let s:r_comment  = 'white'   " comments
-let s:r_keyword  = 'bpurple'      " if / for / return / def
-let s:r_operator = 'bcyan'        " + - * / = ->
-let s:r_func     = 'bblue'       " function names and calls
-let s:r_type     = 'byellow'     " types, classes, structs
-let s:r_string   = 'bgreen'      " string literals
-let s:r_number   = 'bred'      " numbers, booleans, chars
-let s:r_const    = 'bred'      " constants, enum members
-let s:r_var      = 'bwhite'       " plain variables
-let s:r_param    = 'bwhite'     " function parameters
-let s:r_field    = 'bblue'   " obj.field / struct members
-let s:r_builtin  = 'bred'        " builtins: self, None, True, len()
-let s:r_preproc  = 'bpurple'       " #include, decorators, macros
-let s:r_special  = 'bcyan'       " escape sequences, format specifiers
-let s:r_punct    = 'bblack'   " brackets, commas, semicolons
-let s:r_tag      = 'bblue'       " HTML/XML tag names
-let s:r_label    = 'bcyan'   " goto labels, dict keys in some langs
+let s:r_comment  = 'overlay2'   " comments
+let s:r_keyword  = 'mauve'      " if / for / return / def
+let s:r_operator = 'sky'        " + - * / = ->
+let s:r_func     = 'blue'       " function names and calls
+let s:r_type     = 'yellow'     " types, classes, structs
+let s:r_string   = 'green'      " string literals
+let s:r_number   = 'peach'      " numbers, booleans, chars
+let s:r_const    = 'peach'      " constants, enum members
+let s:r_var      = 'text'       " plain variables
+let s:r_param    = 'maroon'     " function parameters
+let s:r_field    = 'lavender'   " obj.field / struct members
+let s:r_builtin  = 'red'        " builtins: self, None, True, len()
+let s:r_preproc  = 'pink'       " #include, decorators, macros
+let s:r_special  = 'pink'       " escape sequences, format specifiers
+let s:r_punct    = 'overlay2'   " brackets, commas, semicolons
+let s:r_tag      = 'blue'       " HTML/XML tag names
+let s:r_label    = 'sapphire'   " goto labels, dict keys in some langs
 
 " Semantic roles used by UI, diffs, diagnostics and plugins.
-let s:r_error    = 'bred'
-let s:r_warn     = 'byellow'
-let s:r_info     = 'bcyan'
-let s:r_hint     = 'bcyan'
-let s:r_ok       = 'bgreen'
-let s:r_added    = 'bgreen'
-let s:r_changed  = 'byellow'
-let s:r_removed  = 'bred'
-let s:r_search   = 'bcyan'        " background of search matches
-let s:r_match    = 'byellow'      " matching bracket, fuzzy-match characters
-let s:r_accent   = 'bpurple'   " titles, headings, "you are here" markers
+let s:r_error    = 'red'
+let s:r_warn     = 'yellow'
+let s:r_info     = 'sky'
+let s:r_hint     = 'teal'
+let s:r_ok       = 'green'
+let s:r_added    = 'green'
+let s:r_changed  = 'yellow'
+let s:r_removed  = 'red'
+let s:r_search   = 'sky'        " background of search matches
+let s:r_match    = 'peach'      " matching bracket, fuzzy-match characters
+let s:r_accent   = 'lavender'   " titles, headings, "you are here" markers
 
 
 " =============================================================================
@@ -177,15 +322,15 @@ let s:bg_eff = s:transparent ? '' : s:bg
 " -- the buffer itself --------------------------------------------------------
 call s:hi('Normal',        s:fg,       s:bg_eff,    s:none)
 call s:hi('NormalFloat',   s:fg,       s:bg_float,  s:none)   " nvim popups
-call s:hi('FloatBorder',   s:fg_mute,   s:bg_float,  s:none)
+call s:hi('FloatBorder',   s:border,   s:bg_float,  s:none)
 call s:hi('FloatTitle',    s:r_accent, s:bg_float,  s:bold)
-call s:hi('FloatShadow',   '',         s:bg,     s:none)
+call s:hi('FloatShadow',   '',         'crust',     s:none)
 call s:link('FloatShadowThrough', 'FloatShadow')
 
 " NormalNC is the text in *non-current* windows (nvim only). Dimming it makes
 " "which split am I in" obvious at a glance. g:mocha_dim_inactive = 0 to stop.
 if s:dim_inactive
-  call s:hi('NormalNC',    s:fg_dim,   s:transparent ? '' : s:bg, s:none)
+  call s:hi('NormalNC',    s:fg_dim,   s:transparent ? '' : 'mantle', s:none)
 else
   call s:link('NormalNC', 'Normal')
 endif
@@ -193,52 +338,55 @@ endif
 " -- cursor and current line -------------------------------------------------
 " Cursor/lCursor only apply in GUI vim and in nvim's :terminal; a terminal vim
 " draws the cursor with the terminal's own colour. Harmless to define.
-call s:hi('Cursor',        s:bg,       s:fg,       s:none)
+call s:hi('Cursor',        'base',     'rosewater', s:none)
 call s:link('lCursor',     'Cursor')
 call s:link('CursorIM',    'Cursor')
 call s:link('TermCursor',  'Cursor')
-call s:hi('TermCursorNC',  s:bg,       s:fg_mute,  s:none)
+call s:hi('TermCursorNC',  'base',     'overlay0',  s:none)
 
 call s:hi('CursorLine',    '',         s:bg_cursor, s:none)
 call s:hi('CursorColumn',  '',         s:bg_cursor, s:none)
-call s:hi('ColorColumn',   '',         s:bg,        s:none)  " the 'colorcolumn' ruler
+call s:hi('ColorColumn',   '',         'surface0',  s:none)  " the 'colorcolumn' ruler
 
+" Line numbers. Your old scheme forced these to hard Blue/Yellow from the vimrc;
+" that override has been removed so these two lines are now the only place they
+" are decided.
 call s:hi('LineNr',        s:fg_mute,  '',          s:none)
 call s:hi('CursorLineNr',  s:r_accent, '',          s:bold)
 call s:link('LineNrAbove', 'LineNr')
 call s:link('LineNrBelow', 'LineNr')
-call s:hi('CursorLineFold', s:fg_mute, s:bg_cursor, s:none)
-call s:hi('CursorLineSign', '',        s:bg_cursor, s:none)
+call s:hi('CursorLineFold','overlay0', s:bg_cursor, s:none)
+call s:hi('CursorLineSign','',         s:bg_cursor, s:none)
 
 " -- gutters, folds, splits --------------------------------------------------
-call s:hi('SignColumn',     s:fg_mute, '',          s:none)
-call s:hi('FoldColumn',     s:fg_mute, '',          s:none)
-call s:hi('Folded',         s:fg_dim,  s:bg,        s:none)
-call s:hi('VertSplit',      s:fg_mute, '',          s:none)  " vim name
+call s:hi('SignColumn',    'overlay0', '',          s:none)
+call s:hi('FoldColumn',    'overlay0', '',          s:none)
+call s:hi('Folded',        'blue',     'surface0',  s:none)
+call s:hi('VertSplit',     s:border,   '',          s:none)  " vim name
 call s:link('WinSeparator','VertSplit')                      " nvim name
 
 " -- statusline and tabline --------------------------------------------------
 " A statusline plugin (lualine et al) would override these; you have none, so
 " this is what you actually see.
-call s:hi('StatusLine',    s:fg,       s:bg_sel,    s:none)
-call s:hi('StatusLineNC',  s:fg_mute,  s:bg,        s:none)
-call s:hi('StatusLineTerm',   s:r_ok,  s:bg_sel,    s:bold)
-call s:hi('StatusLineTermNC', s:r_ok,  s:bg,        s:none)
+call s:hi('StatusLine',    s:fg,       'surface0',  s:none)
+call s:hi('StatusLineNC',  'overlay0', s:bg_alt,    s:none)
+call s:hi('StatusLineTerm',   'green', 'surface0',  s:bold)
+call s:hi('StatusLineTermNC', 'green', s:bg_alt,    s:none)
 call s:hi('WinBar',        s:r_accent, '',          s:bold)
-call s:hi('WinBarNC',      s:fg_mute,  '',          s:none)
+call s:hi('WinBarNC',      'overlay0', '',          s:none)
 
-call s:hi('TabLine',       s:fg_mute,  s:bg,        s:none)
-call s:hi('TabLineFill',   '',         s:bg,        s:none)
-call s:hi('TabLineSel',    s:r_accent, '',          s:bold)
+call s:hi('TabLine',       'overlay0', s:bg_alt,    s:none)
+call s:hi('TabLineFill',   '',         'crust',     s:none)
+call s:hi('TabLineSel',    s:r_accent, s:bg,        s:bold)
 
 " -- messages ----------------------------------------------------------------
 call s:hi('ModeMsg',       s:fg,       '',          s:bold)   " -- INSERT --
-call s:hi('MoreMsg',       s:r_ok,     '',          s:bold)   " -- More --
-call s:hi('Question',      s:r_ok,     '',          s:none)   " prompts
+call s:hi('MoreMsg',       'green',    '',          s:bold)   " -- More --
+call s:hi('Question',      'green',    '',          s:none)   " prompts
 call s:hi('WarningMsg',    s:r_warn,   '',          s:bold)
 call s:hi('ErrorMsg',      s:r_error,  '',          s:bold)
 call s:hi('MsgArea',       s:fg,       '',          s:none)
-call s:hi('MsgSeparator',  s:fg_mute,  s:bg_float,  s:none)
+call s:hi('MsgSeparator',  s:border,   s:bg_float,  s:none)
 call s:hi('Error',         s:r_error,  '',          s:bold)
 
 " -- selection, search, matching ---------------------------------------------
@@ -247,55 +395,55 @@ call s:hi('VisualNOS',     '',         s:bg_sel,    s:none)
 
 " Search: dark text on a coloured block. CurSearch (nvim) / the match you are
 " standing on gets the louder colour so you can tell it from the other hits.
-call s:hi('Search',        s:bg,    s:r_search,  s:bold)
-call s:hi('CurSearch',     s:bg,    s:r_match,   s:bold)
-call s:hi('IncSearch',     s:bg,    s:r_match,   s:bold)
-call s:hi('Substitute',    s:bg,    s:r_removed, s:bold)   " :s preview
-call s:hi('MatchParen',    s:r_match, s:bg_sel,  s:bold)
-call s:hi('QuickFixLine',  '',      s:bg,        s:bold)
+call s:hi('Search',        'crust',    s:r_search,  s:bold)
+call s:hi('CurSearch',     'crust',    s:r_match,   s:bold)
+call s:hi('IncSearch',     'crust',    s:r_match,   s:bold)
+call s:hi('Substitute',    'crust',    s:r_removed, s:bold)   " :s preview
+call s:hi('MatchParen',    s:r_match,  'surface1',  s:bold)
+call s:hi('QuickFixLine',  '',         'surface0',  s:bold)
 
 " -- popup menu (completion) -------------------------------------------------
-call s:hi('Pmenu',         s:fg_dim,   s:bg_float, s:none)
-call s:hi('PmenuSel',      s:fg,       s:bg_sel,   s:bold)
-call s:hi('PmenuSbar',     '',         s:bg,       s:none)
-call s:hi('PmenuThumb',    '',         s:fg_mute,  s:none)
-call s:hi('PmenuKind',     s:r_type,   s:bg_float, s:none)   " the "[Function]" column
-call s:hi('PmenuKindSel',  s:r_type,   s:bg_sel,   s:bold)
-call s:hi('PmenuExtra',    s:fg_mute,  s:bg_float, s:none)   " the trailing detail column
-call s:hi('PmenuExtraSel', s:fg_dim,   s:bg_sel,   s:bold)
-call s:hi('PmenuMatch',    s:r_match,  s:bg_float, s:bold)   " matched characters
-call s:hi('PmenuMatchSel', s:r_match,  s:bg_sel,   s:bold)
+call s:hi('Pmenu',         s:fg_dim,   s:bg_float,  s:none)
+call s:hi('PmenuSel',      s:fg,       'surface1',  s:bold)
+call s:hi('PmenuSbar',     '',         'surface0',  s:none)
+call s:hi('PmenuThumb',    '',         'surface2',  s:none)
+call s:hi('PmenuKind',     s:r_type,   s:bg_float,  s:none)   " the "[Function]" column
+call s:hi('PmenuKindSel',  s:r_type,   'surface1',  s:bold)
+call s:hi('PmenuExtra',    'overlay0', s:bg_float,  s:none)   " the trailing detail column
+call s:hi('PmenuExtraSel', s:fg_dim,   'surface1',  s:bold)
+call s:hi('PmenuMatch',    s:r_match,  s:bg_float,  s:bold)   " matched characters
+call s:hi('PmenuMatchSel', s:r_match,  'surface1',  s:bold)
 call s:link('ComplMatchIns', 'PmenuMatch')
-call s:hi('WildMenu',      s:bg,       s:r_accent, s:bold)
+call s:hi('WildMenu',      'crust',    s:r_accent,  s:bold)
 call s:link('PopupSelected', 'PmenuSel')
 call s:link('PopupNotification', 'WarningMsg')
 call s:link('MessageWindow', 'NormalFloat')
 
 " -- invisibles and misc -----------------------------------------------------
-call s:hi('NonText',       s:fg_mute, '',          s:none)   " '@' past end, eol markers
-call s:hi('EndOfBuffer',   s:fg_mute, '',          s:none)   " the '~' lines
-call s:hi('Whitespace',    s:fg_mute, '',          s:none)   " 'listchars' dots/tabs
-call s:hi('SpecialKey',    s:fg_mute, '',          s:none)
-call s:hi('Conceal',       s:fg_mute, '',          s:none)
-call s:hi('Directory',     s:r_func,     '',          s:bold)   " netrw/oil dir names
+call s:hi('NonText',       'surface2', '',          s:none)   " '@' past end, eol markers
+call s:hi('EndOfBuffer',   'surface1', '',          s:none)   " the '~' lines
+call s:hi('Whitespace',    'surface1', '',          s:none)   " 'listchars' dots/tabs
+call s:hi('SpecialKey',    'surface2', '',          s:none)
+call s:hi('Conceal',       'overlay0', '',          s:none)
+call s:hi('Directory',     'blue',     '',          s:bold)   " netrw/oil dir names
 call s:hi('Title',         s:r_accent, '',          s:bold)
-call s:hi('Ignore',        s:fg_mute, '',          s:none)
-call s:hi('Todo',          s:bg,    s:r_warn,    s:bold)   " TODO/FIXME/XXX
+call s:hi('Ignore',        'overlay0', '',          s:none)
+call s:hi('Todo',          'crust',    s:r_warn,    s:bold)   " TODO/FIXME/XXX
 
 " -- spelling (undercurl in gui, underline in cterm) -------------------------
 call s:hi('SpellBad',   '', '', s:undercurl, s:r_error)
 call s:hi('SpellCap',   '', '', s:undercurl, s:r_warn)
 call s:hi('SpellLocal', '', '', s:undercurl, s:r_info)
-call s:hi('SpellRare',  '', '', s:undercurl, s:r_special)
+call s:hi('SpellRare',  '', '', s:undercurl, 'mauve')
 
 " -- diffs -------------------------------------------------------------------
 " Backgrounds only, tinted very dark, so the code on top stays readable. If you
 " find these too subtle, bump surface0/1 or swap in the accent itself as bg
 " (and then set a dark fg, or the text will vanish).
-call s:hi('DiffAdd',       '',         s:bg,  s:none)
-call s:hi('DiffChange',    '',         s:bg,  s:none)
-call s:hi('DiffDelete',    s:r_removed,'',    s:none)
-call s:hi('DiffText',      s:bg,    s:r_changed, s:bold)   " the changed run itself
+call s:hi('DiffAdd',       '',         'surface0',  s:none)
+call s:hi('DiffChange',    '',         'surface0',  s:none)
+call s:hi('DiffDelete',    s:r_removed,'mantle',    s:none)
+call s:hi('DiffText',      'crust',    s:r_changed, s:bold)   " the changed run itself
 call s:link('DiffTextAdd', 'DiffText')
 
 " git's own syntax groups, used when you edit a patch or a commit message
@@ -304,9 +452,9 @@ call s:hi('diffRemoved',   s:r_removed,'',          s:none)
 call s:hi('diffChanged',   s:r_changed,'',          s:none)
 call s:hi('diffOldFile',   s:r_removed,'',          s:none)
 call s:hi('diffNewFile',   s:r_added,  '',          s:none)
-call s:hi('diffFile',      s:r_func,     '',          s:bold)
-call s:hi('diffLine',      s:fg_dim, '',          s:none)
-call s:hi('diffIndexLine', s:r_keyword,    '',          s:none)
+call s:hi('diffFile',      'blue',     '',          s:bold)
+call s:hi('diffLine',      'overlay2', '',          s:none)
+call s:hi('diffIndexLine', 'mauve',    '',          s:none)
 call s:hi('Added',         s:r_added,  '',          s:none)
 call s:hi('Changed',       s:r_changed,'',          s:none)
 call s:hi('Removed',       s:r_removed,'',          s:none)
@@ -413,7 +561,7 @@ if has('nvim')
   call s:hi('@string.escape',       s:r_special, '', s:bold)   " \n \t
   call s:hi('@string.regexp',       s:r_special, '', s:none)
   call s:hi('@string.special',      s:r_special, '', s:none)
-  call s:hi('@string.special.url',  s:r_special, '', s:underline)
+  call s:hi('@string.special.url',  'sapphire',  '', s:underline)
   call s:hi('@character',           s:r_string,  '', s:none)
   call s:hi('@character.special',   s:r_special, '', s:none)
   call s:hi('@number',              s:r_number,  '', s:none)
@@ -454,33 +602,33 @@ if has('nvim')
 
   " comments
   call s:hi('@comment',             s:r_comment, '', s:italic)
-  call s:hi('@comment.todo',        s:bg,        s:r_info,   s:bold)
-  call s:hi('@comment.note',        s:bg,        s:r_hint,   s:bold)
-  call s:hi('@comment.warning',     s:bg,        s:r_warn,   s:bold)
-  call s:hi('@comment.error',       s:bg,        s:r_error,  s:bold)
+  call s:hi('@comment.todo',        'crust',     s:r_info,   s:bold)
+  call s:hi('@comment.note',        'crust',     s:r_hint,   s:bold)
+  call s:hi('@comment.warning',     'crust',     s:r_warn,   s:bold)
+  call s:hi('@comment.error',       'crust',     s:r_error,  s:bold)
 
   " markup -- markdown, and anything with prose. Pairs with render-markdown.
   call s:hi('@markup.heading',      s:r_accent,  '', s:bold)
-  call s:hi('@markup.heading.1',    s:r_error,       '', s:bold)
-  call s:hi('@markup.heading.2',    s:r_number,     '', s:bold)
-  call s:hi('@markup.heading.3',    s:r_type,    '', s:bold)
-  call s:hi('@markup.heading.4',    s:r_ok,     '', s:bold)
-  call s:hi('@markup.heading.5',    s:r_info,  '', s:bold)
-  call s:hi('@markup.heading.6',    s:r_accent,  '', s:bold)
+  call s:hi('@markup.heading.1',    'red',       '', s:bold)
+  call s:hi('@markup.heading.2',    'peach',     '', s:bold)
+  call s:hi('@markup.heading.3',    'yellow',    '', s:bold)
+  call s:hi('@markup.heading.4',    'green',     '', s:bold)
+  call s:hi('@markup.heading.5',    'sapphire',  '', s:bold)
+  call s:hi('@markup.heading.6',    'lavender',  '', s:bold)
   call s:hi('@markup.strong',       s:fg,        '', s:bold)
   call s:hi('@markup.italic',       s:fg,        '', 'italic')
   call s:hi('@markup.strikethrough',s:fg_mute,   '', 'strikethrough')
   call s:hi('@markup.underline',    '',          '', s:underline)
   call s:hi('@markup.quote',        s:fg_dim,    '', s:italic)
-  call s:hi('@markup.math',         s:r_info,  '', s:none)
-  call s:hi('@markup.link',         s:r_accent,  '', s:none)
-  call s:hi('@markup.link.label',   s:r_info,  '', s:none)
-  call s:hi('@markup.link.url',     s:r_info,  '', s:underline)
+  call s:hi('@markup.math',         'sapphire',  '', s:none)
+  call s:hi('@markup.link',         'lavender',  '', s:none)
+  call s:hi('@markup.link.label',   'sapphire',  '', s:none)
+  call s:hi('@markup.link.url',     'sapphire',  '', s:underline)
   call s:hi('@markup.raw',          s:r_string,  '', s:none)       " `inline code`
   call s:hi('@markup.raw.block',    s:fg_dim,    '', s:none)       " ``` blocks
-  call s:hi('@markup.list',         s:r_number,     '', s:none)
-  call s:hi('@markup.list.checked', s:r_ok,     '', s:none)
-  call s:hi('@markup.list.unchecked', s:fg_mute,'', s:none)
+  call s:hi('@markup.list',         'peach',     '', s:none)
+  call s:hi('@markup.list.checked', 'green',     '', s:none)
+  call s:hi('@markup.list.unchecked', 'overlay1','', s:none)
 
   " tags (HTML/XML/JSX)
   call s:hi('@tag',                 s:r_tag,     '', s:none)
@@ -558,18 +706,18 @@ if has('nvim')
   call s:link('DiagnosticSignHint',      'DiagnosticHint')
   call s:link('DiagnosticSignOk',        'DiagnosticOk')
   call s:link('DiagnosticDeprecated',    '@markup.strikethrough')
-  call s:hi('DiagnosticUnnecessary', s:fg_mute, '', s:none)  " unused imports
+  call s:hi('DiagnosticUnnecessary', 'overlay0', '', s:none)  " unused imports
 
   " Reference highlights: where else in this file is the symbol under the
   " cursor? Backgrounds only, so the syntax colour survives.
-  call s:hi('LspReferenceText',  '', s:bg_sel, s:none)
-  call s:hi('LspReferenceRead',  '', s:bg_sel, s:none)
-  call s:hi('LspReferenceWrite', '', s:bg_sel, s:bold)
-  call s:hi('LspReferenceTarget','', s:bg_sel, s:none)
-  call s:hi('LspInlayHint',      s:fg_mute, s:bg, s:italic)
-  call s:hi('LspCodeLens',       s:fg_mute, '',       s:italic)
-  call s:hi('LspCodeLensSeparator', s:fg_mute, '',    s:none)
-  call s:hi('LspSignatureActiveParameter', s:bg, s:r_match, s:bold)
+  call s:hi('LspReferenceText',  '', 'surface1', s:none)
+  call s:hi('LspReferenceRead',  '', 'surface1', s:none)
+  call s:hi('LspReferenceWrite', '', 'surface1', s:bold)
+  call s:hi('LspReferenceTarget','', 'surface1', s:none)
+  call s:hi('LspInlayHint',      'overlay0', 'mantle', s:italic)
+  call s:hi('LspCodeLens',       'overlay0', '',       s:italic)
+  call s:hi('LspCodeLensSeparator', 'overlay0', '',    s:none)
+  call s:hi('LspSignatureActiveParameter', 'crust', s:r_match, s:bold)
   call s:link('SnippetTabstop', 'Visual')
 endif
 
@@ -738,20 +886,79 @@ call s:hi('qCommentDoc',s:r_comment,  '', 'bold,italic')
 " tools use for "dim" text.
 
 if has('nvim')
-  let g:terminal_color_0  = s:palette['black'][0]
+  let g:terminal_color_0  = s:palette['surface1'][0]
   let g:terminal_color_1  = s:palette['red'][0]
   let g:terminal_color_2  = s:palette['green'][0]
   let g:terminal_color_3  = s:palette['yellow'][0]
   let g:terminal_color_4  = s:palette['blue'][0]
-  let g:terminal_color_5  = s:palette['purple'][0]
-  let g:terminal_color_6  = s:palette['cyan'][0]
-  let g:terminal_color_7  = s:palette['white'][0]
-  let g:terminal_color_8  = s:palette['bblack'][0]
-  let g:terminal_color_9  = s:palette['bred'][0]
-  let g:terminal_color_10 = s:palette['bgreen'][0]
-  let g:terminal_color_11 = s:palette['byellow'][0]
-  let g:terminal_color_12 = s:palette['bblue'][0]
-  let g:terminal_color_13 = s:palette['bpurple'][0]
-  let g:terminal_color_14 = s:palette['bcyan'][0]
-  let g:terminal_color_15 = s:palette['bwhite'][0]
+  let g:terminal_color_5  = s:palette['pink'][0]
+  let g:terminal_color_6  = s:palette['teal'][0]
+  let g:terminal_color_7  = s:palette['subtext1'][0]
+  let g:terminal_color_8  = s:palette['surface2'][0]
+  let g:terminal_color_9  = s:palette['red'][0]
+  let g:terminal_color_10 = s:palette['green'][0]
+  let g:terminal_color_11 = s:palette['yellow'][0]
+  let g:terminal_color_12 = s:palette['blue'][0]
+  let g:terminal_color_13 = s:palette['pink'][0]
+  let g:terminal_color_14 = s:palette['teal'][0]
+  let g:terminal_color_15 = s:palette['text'][0]
 endif
+
+
+" =============================================================================
+" 12. TOOLING
+" =============================================================================
+" Two commands to make editing this file a loop instead of a guess.
+"
+"   :MochaPalette   every palette entry, drawn in its own colour, with the hex
+"                   and cterm number. Use it to pick a hue for a role.
+"   :MochaWhat      the highlight group(s) under the cursor, and what they
+"                   resolve to. Works in plain vim; in nvim, :Inspect is
+"                   better because it also reports treesitter and LSP.
+
+" Two helper groups per palette entry: the name drawn in the colour (Swatch_),
+" and a solid block filled with it (Block_). The block matters -- a dark tier
+" like crust is invisible as foreground text but obvious as a filled bar.
+for [s:name, s:val] in items(s:palette)
+  execute 'highlight MochaSwatch_' . s:name
+        \ . ' guifg=' . s:val[0] . ' ctermfg=' . s:val[1]
+        \ . ' guibg=NONE ctermbg=NONE gui=bold cterm=bold'
+  execute 'highlight MochaBlock_' . s:name
+        \ . ' guifg=' . s:val[0] . ' ctermfg=' . s:val[1]
+        \ . ' guibg=' . s:val[0] . ' ctermbg=' . s:val[1] . ' gui=NONE cterm=NONE'
+endfor
+unlet! s:name s:val
+
+function! s:PaletteDemo() abort
+  echo 'mocha palette  (name / hex / cterm)'
+  for l:n in sort(keys(s:palette))
+    " echo starts a new line and echon continues it, so each entry is:
+    " one bare echo, then echon fragments. (No trailing " comments on an
+    " echo line -- vim reads the quote as the start of a string.)
+    echo ''
+    execute 'echohl MochaSwatch_' . l:n
+    echon printf('%-11s %s %4d  ', l:n, s:palette[l:n][0], s:palette[l:n][1])
+    execute 'echohl MochaBlock_' . l:n
+    echon '        '
+    echohl None
+  endfor
+endfunction
+command! MochaPalette call s:PaletteDemo()
+
+function! s:WhatGroup() abort
+  let l:stack = synstack(line('.'), col('.'))
+  if empty(l:stack)
+    echo 'no syntax group here (treesitter? try :Inspect in nvim)'
+    return
+  endif
+  for l:id in l:stack
+    let l:name  = synIDattr(l:id, 'name')
+    let l:trans = synIDattr(synID(line('.'), col('.'), 1), 'name')
+    let l:final = synIDattr(synIDtrans(l:id), 'name')
+    echo printf('%-24s -> %-16s fg=%s', l:name, l:final,
+          \ synIDattr(synIDtrans(l:id), 'fg#'))
+  endfor
+endfunction
+command! MochaWhat call s:WhatGroup()
+
+" vim: set fdm=expr fde=getline(v\:lnum)=~'^\"\ =\\{20,}$'?'>1'\:'=' :

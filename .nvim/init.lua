@@ -76,7 +76,10 @@ vim.api.nvim_create_autocmd("FileType", {
 -- lazy.nvim bootstraps itself into ~/.local/share/nvim, NOT into the dotfiles
 -- repo, so plugin source never ends up in git.
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.uv.fs_stat(lazypath) then
+-- vim.uv is 0.10+; vim.loop is the pre-0.10 name. Fall back so this file at
+-- least loads on an older nvim instead of erroring out here and taking the 
+-- whole config (LSP included) with it.
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
   vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable",
     "https://github.com/folke/lazy.nvim.git", lazypath })
 end
@@ -159,6 +162,18 @@ require("lazy").setup({
 }, {
   install = { colorscheme = { "mocha" } },
   change_detection = { notify = false },
+  -- lazy.nvim rebuilds runtimepath from scratch in setup(), which silently drops
+  -- the ~/.vim prepend at the top of this file -- and with it syntax/{q,k}.vim and
+  -- ftdetect/{q,k}.vim, so .q files never even got a filetype. Re-add them here;
+  -- this is the only path lazy preserves.
+  performance = {
+    rtp = {
+      paths = {
+        vim.fn.expand("~/.vim"),
+        vim.fn.expand("~/.vim/after"),
+      },
+    },
+  },
 })
 
 ----------------------------------------------------------------------- lsp --

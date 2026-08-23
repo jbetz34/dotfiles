@@ -1,9 +1,38 @@
-[core]
-        editor = vim
-        visual = vim
 [user]
 	email = jbetz34@gmail.com
 	name = James
+[core]
+	editor = vim
+	visual = vim
+    pager = less -RSX
+[color "branch"]
+    current = brightyellow 
+    local = brightgreen 
+    remote = brightcyan 
+[color "diff"]
+    meta = brightyellow 
+    frag = brightmagenta 
+    old = brightred 
+    new = brightgreen 
+    whitespace = red reverse
+[color "status"]
+    added = brightgreen 
+    changes = brightyellow 
+    untracked = brightred 
+[diff] # idk how much this actually matters
+    algorithm = minimal
+[push]
+    default = upstream
 [alias]
-	ls = log --oneline -10
+    a= add
+    br = branch
+    bl = blame
+    cm = commit -m
+    co = checkout
+    d = diff
+    me = config user.name
+    ls = log --pretty=format:'%C(yellow)%h%C(red)%d %C(cyan)[%cn] %C(reset)%s' --decorate -10
 	st = status
+    wa = worktree add
+    wl = worktree list
+    wr = worktree remove

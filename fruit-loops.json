@@ -1,0 +1,23 @@
+{
+	"name": "Fruit Loops",
+	"background": "#1E2327",
+	"foreground":"#F2F2F2",
+	"cursorColor":"#A2ADB5",
+	"selectionBackground": "#F2F2F2",
+	"black": "#1E2327",
+	"blue": "#0087E5",
+	"brightBlack": "#565F67",
+	"brightBlue": "#7FBEFF",
+	"brightCyan": "#00D3D3",
+	"brightGreen": "#71D700",
+	"brightPurple": "#DF97FF",
+	"brightRed": "#FF9890",
+	"brightWhite": "#F2F2F2",
+	"brightYellow": "#D9B600",
+	"cyan": "#009797",
+	"green": "#4F9A00",
+	"purple": "#C301FB",
+	"red": "#F60029",
+	"white": "#A2ADB5",
+	"yellow": "#9C8200"
+}
